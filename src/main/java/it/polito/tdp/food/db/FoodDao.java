@@ -162,11 +162,11 @@ public class FoodDao
 		String sql = "SELECT p1.portion_id id1, p2.portion_id id2, COUNT(DISTINCT(p1.food_code)) peso "
 					+ "FROM food_pyramid_mod.portion p1, "
 					+ "	  food_pyramid_mod.portion p2 "
-					+ "WHERE p1.portion_id < p2.portion_id "
+					+ "WHERE p1.portion_display_name < p2.portion_display_name "
 					+ "		AND p1.food_code = p2.food_code "
 					+ "		AND p1.calories < ? "
 					+ "		AND p2.calories < ? "
-					+ "GROUP BY id1,id2";
+					+ "GROUP BY p1.portion_display_name, p1.portion_display_name " ; 
 		
 		List<Adiacenza> list = new ArrayList<>();
 		try
