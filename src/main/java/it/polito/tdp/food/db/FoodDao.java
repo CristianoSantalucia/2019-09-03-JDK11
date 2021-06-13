@@ -91,14 +91,11 @@ public class FoodDao
 	public List<Portion> listAllPortions()
 	{
 		String sql = "SELECT * FROM portion";
+		List<Portion> list = new ArrayList<>();
 		try
 		{
 			Connection conn = DBConnect.getConnection();
-
 			PreparedStatement st = conn.prepareStatement(sql);
-
-			List<Portion> list = new ArrayList<>();
-
 			ResultSet res = st.executeQuery();
 
 			while (res.next())
@@ -129,9 +126,9 @@ public class FoodDao
 	public void getVertici(Map<Integer, Portion> vertici, int calorie)
 	{
 		String sql = "SELECT p.* "
-					+ "FROM food_pyramid_mod.portion p "
-					+ "WHERE p.calories < ? "
-					+ "GROUP BY p.portion_display_name ";
+				+ "FROM food_pyramid_mod.portion p "
+				+ "WHERE p.calories < ? "
+				+ "GROUP BY p.portion_display_name ";
 		try
 		{
 			Connection conn = DBConnect.getConnection();
@@ -143,10 +140,10 @@ public class FoodDao
 			{
 				try
 				{
-					 Portion p = new Portion(res.getInt("portion_id"), res.getDouble("portion_amount"),
+					Portion p = new Portion(res.getInt("portion_id"), res.getDouble("portion_amount"),
 							res.getString("portion_display_name"), res.getDouble("calories"),
 							res.getDouble("saturated_fats"), res.getInt("food_code"));
-					 vertici.putIfAbsent(p.getPortion_id(), p); 
+					vertici.putIfAbsent(p.getPortion_id(), p); 
 				}
 				catch (Throwable t)
 				{
@@ -158,6 +155,53 @@ public class FoodDao
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+	}
+	public List<Adiacenza> getAdiacenze(Map<Integer, Portion> vertici, int calorie)
+	{
+		String sql = "SELECT p1.portion_id id1, p2.portion_id id2, COUNT(DISTINCT(p1.food_code)) peso "
+					+ "FROM food_pyramid_mod.portion p1, "
+					+ "	  food_pyramid_mod.portion p2 "
+					+ "WHERE p1.portion_id < p2.portion_id "
+					+ "		AND p1.food_code = p2.food_code "
+					+ "		AND p1.calories < ? "
+					+ "		AND p2.calories < ? "
+					+ "GROUP BY id1,id2";
+		
+		List<Adiacenza> list = new ArrayList<>();
+		try
+		{
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, calorie);
+			st.setInt(2, calorie);
+			ResultSet res = st.executeQuery();
+
+			while (res.next())
+			{
+				try
+				{
+					Portion p1 = vertici.get(res.getInt("id1"));
+					Portion p2 = vertici.get(res.getInt("id2"));
+					Integer peso = res.getInt("peso");
+					if(p1 != null && p2 != null)
+					{
+						Adiacenza a = new Adiacenza(p1, p2, peso);
+						list.add(a);
+					}
+				}
+				catch (Throwable t)
+				{
+					t.printStackTrace();
+				}
+			}
+			conn.close();
+			return list; 
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null; 
 		}
 	}
 }

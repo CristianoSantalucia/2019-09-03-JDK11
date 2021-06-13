@@ -45,8 +45,8 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField fx:id="txtCalorie" text="50" GridPane.columnIndex="1" />
-                  <TextField fx:id="txtPassi" disable="true" prefWidth="129.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtCalorie" onAction="#doCreaGrafo" text="50" GridPane.columnIndex="1" />
+                  <TextField fx:id="txtPassi" disable="true" onAction="#doCammino" prefWidth="129.0" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Button fx:id="btnAnalisi" mnemonicParsing="false" onAction="#doCreaGrafo" prefWidth="80.0" text="Analisi" GridPane.columnIndex="2">
                      <GridPane.margin>
                         <Insets right="20.0" />

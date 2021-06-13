@@ -5,6 +5,7 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import it.polito.tdp.food.model.Model;
 import it.polito.tdp.food.model.Portion;
@@ -80,6 +81,7 @@ public class FoodController
 			this.btnCammino.setDisable(false);
 			this.btnCorrelate.setDisable(false);
 			this.boxPorzioni.setDisable(false);
+			this.boxPorzioni.getItems().clear();
 			this.txtPassi.setDisable(false);
 
 			//aggiungo risultati alla combobox 
@@ -94,12 +96,44 @@ public class FoodController
 	
 	@FXML void doCorrelate(ActionEvent event)
 	{
-		txtResult.appendText("Cerco porzioni correlate...");
+		Portion partenza = this.boxPorzioni.getValue(); 
+		if (partenza == null)
+		{
+			this.txtResult.appendText("\n\nErrore, scegliere elemento dalla lista");
+			return;
+		} 
+		
+		txtResult.appendText("\n" + this.model.getConnessioni(partenza));
 	}
 	
 	@FXML void doCammino(ActionEvent event)
 	{
-		txtResult.appendText("Cerco cammino peso massimo...");
+		Integer N;
+		try
+		{
+			N = Integer.parseInt(this.txtPassi.getText());
+			if(N <= 0)
+			{
+				this.txtResult.appendText("\n\nErrore, inserire un numero > 0");
+				return; 
+			}
+		}
+		catch(NumberFormatException nfe)
+		{
+			this.txtResult.appendText("\n\nErrore, inserire un numero corretto");
+			return;
+		} 
+		
+		Portion partenza = this.boxPorzioni.getValue(); 
+		if (partenza == null)
+		{
+			this.txtResult.appendText("\n\nErrore, scegliere elemento dalla lista");
+			return;
+		} 
+		
+		txtResult.appendText("\n\nCerco cammino peso massimo...");
+		
+		txtResult.appendText("\nTROVATO CAMMINO:\n\n " + model.cammino(N, partenza));
 	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
